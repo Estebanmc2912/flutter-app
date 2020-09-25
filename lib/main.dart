@@ -34,10 +34,43 @@ class RandomWordsState extends State<RandomWords>{  // Creador del diseño de la
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('Bienvenido a mí mundo')
+          title: Text('Generador de nombres de Startups'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.list),
+              onPressed: _pushSaved, // función que se le pasa cuando selecciona un item
+            )
+          ],
       ),
       body: _buildSuggestions(),
     );
+  }
+
+  void _pushSaved(){
+    Navigator.of(context).push(MaterialPageRoute( builder: (context) {
+      final tiles = _saved.map((pair){ // Hacemos un mapa para guardar los seleccionados
+        return ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: _biggerFont,
+          ),
+        );
+      });
+
+       final divided = ListTile.divideTiles( // Listado de ListStyles con separadores entre ellos
+           context: context,
+           tiles: tiles).toList();
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Sugerencias guardadas"),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: divided,
+        )
+      );
+    })
+    ); // función para crear una nueva pantalla, o navegador el cual recibe una ruta
   }
 
   Widget _buildSuggestions (){ // creador del List View
@@ -52,7 +85,6 @@ class RandomWordsState extends State<RandomWords>{  // Creador del diseño de la
           if (i >=_suggestions.length) { //para que la lista mostrada sea interminable (infinita)
             _suggestions.addAll(generateWordPairs().take(10));
                 }
-
 
           return _buildRow(_suggestions[i]); // retorno con llamamiento de función que hace el item
         },
