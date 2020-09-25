@@ -28,6 +28,7 @@ class RandomWords extends StatefulWidget { // Creador del estado interactivo
 class RandomWordsState extends State<RandomWords>{  // Creador del diseño de la aplicación que hereda el estado del antes mencionado
   final _suggestions = <WordPair>[]; // el raya al piso significa que un atributo es privado, lista de palabras
   final _biggerFont = const TextStyle( fontSize: 16); // creación de variable para definir el tamaño
+  final _saved = Set<WordPair>();// los sets son una lista de objetos únicos, no se pueden repetir
 
   @override
   Widget build(BuildContext context) {
@@ -53,17 +54,32 @@ class RandomWordsState extends State<RandomWords>{  // Creador del diseño de la
                 }
 
 
-          return _buildRow(_suggestions[i]);
+          return _buildRow(_suggestions[i]); // retorno con llamamiento de función que hace el item
         },
     );
   }
 
-  Widget _buildRow(WordPair pair){ // creador de cada fila
+  Widget _buildRow(WordPair pair){ // creador de cada elemento/item
+    final alreadySaved = _saved.contains(pair);
+
     return ListTile(
      title: Text(
          pair.asPascalCase,
          style: _biggerFont, // llamamos la variable creada anteriormente y acá le damos estilo
      ),
+      trailing: Icon(
+         alreadySaved ? Icons.favorite : Icons.favorite_border,
+         color: alreadySaved ? Colors.redAccent : Colors.blueGrey,
+      ),
+      onTap: (){
+       setState(() {
+         if (alreadySaved){
+            _saved.remove(pair);
+         } else {
+            _saved.add(pair);
+         }
+       });
+      },
     );
   }
 
